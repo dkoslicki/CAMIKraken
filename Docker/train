@@ -44,7 +44,7 @@ cp /dckr/mnt/input/gi_taxid_nucl.dmp /dckr/mnt/output/Database/taxonomy
 cat $CONT_CONTIGS_FILE_LISTING | xargs -I{} /kraken-0.10.5-beta/./kraken-build --add-to-library /dckr/mnt/input/{} --db /dckr/mnt/output/Database
 
 #Build the Kraken database
-/kraken-0.10.5-beta/./kraken-build --build --db /dckr/mnt/output/Database --threads ${DCKR_THREADS}
+/kraken-0.10.5-beta/./kraken-build --build --db /dckr/mnt/output/Database --threads 2 --kmer-len 10 --minimizer-len 5 #${DCKR_THREADS}
 
 #Build the taxonomy
 cd /tmp
