@@ -15,22 +15,41 @@ then
 	exit 0
 fi
 
-#Create file of full names of sequences
+#check if names, nodes, and gi_taxid_nucl.dmp exist
+if [ ! -f /dckr/mnt/input/names.dmp ]
+then
+	echo "Missing names.dmp from input folder"
+	exit 0
+fi
+if [ ! -f /dckr/mnt/input/nodes.dmp ]
+then
+	echo "Missing nodes.dmp from input folder"
+	exit 0
+fi
+if [ ! -f /dckr/mnt/input/gi_taxid_nucl.dmp ]
+then
+	echo "Missing gi_taxid_nucl.dmp from input folder"
+	exit 0
+fi
+
+#Create output
+mkdir /dckr/mnt/output/Database
+mkdir /dckr/mnt/output/Database/taxonomy
+mkdir /dckr/mnt/output/Database/library
+cp /dckr/mnt/input/names.dmp /dckr/mnt/output/Database/taxonomy
+cp /dckr/mnt/input/nodes.dmp /dckr/mnt/output/Database/taxonomy
+cp /dckr/mnt/input/gi_taxid_nucl.dmp /dckr/mnt/output/Database/taxonomy
+
+#Add all files to Kraken training database
+cat $CONT_CONTIGS_FILE_LISTING | xargs -I{} /kraken-0.10.5-beta/./kraken-build --add-to-library {} --db /dckr/mnt/output/Database
+
+#Build the Kraken database
+/kraken-0.10.5-beta/./kraken-build --build --db /dckr/mnt/output/Database --threads ${DCKR_THREADS}
+
+#Build the taxonomy
 cd /tmp
-cat $CONT_CONTIGS_FILE_LISTING | xargs -I{} sh -c "echo /dckr/mnt/input/{} >> /tmp/FileNames.txt"
-
-#Create RAM disk for bcalm
-mkdir /ramdisk
-chmod 777 /ramdisk
-mount -t tmpfs -o size=${RAM_DISK_SIZE:=10G} tmpfs /ramdisk/
-
-#Run common kmers, using default quality score of C (phred33 code 35) unless otherwise set by the user
-julia -p ${DCKR_THREADS} /usr/local/sbin/Train.jl -i /tmp/FileNames.txt -o ${CONT_PROFILING_FILES} -b /usr/local/bin/./bcalm -r /ramdisk/ -j /jellyfish/jellyfish-2.2.3/bin/./jellyfish -c /usr/local/bin/./count_in_file
-cd /dckr/mnt/input
-
-#Unmount the RAM disk
-umount -v /ramdisk
-
-echo "Be sure to create an acceptable taxonomy. See https://github.com/dkoslicki/CommonKmers for more information"
+tar -czf NamesAndNodes.tar.gz /dckr/mnt/input/names.dmp /dckr/mnt/input/nodes.dmp
+python /usr/local/sbin/generate_taxonomy_taxid.py --ncbi_taxdump file:///temp/NamesAndNodes.tar.gz --output taxonomy_taxID.txt
+cut -f2 /dckr/mnt/output/Database/seq2taxid.map | sort -u | LC_ALL=C xargs -I{} grep -m1 "^{}_" taxonomy_taxID.txt > /dckr/mnt/output/Database/taxonomy_taxID_Kraken.txt
 
 
