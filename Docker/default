@@ -35,7 +35,6 @@ do
 	/kraken-0.10.5-beta/./kraken --preload --db ${CONT_DATABASES_DIR}/Database --fastq-input --gzip-compressed --threads ${DCKR_THREADS} /dckr/mnt/input/${file} | cut -f3 | sort | LC_ALL=C uniq -c | sed -e 's/^ *//;s/ /\t/' > ${dir}${sample}.taxIDs.counts
 
 	#Then find the taxIDs in the taxonomy and print out the taxonomy
-	rm ${dir}${sample}.taxIDs.fullTaxonomy 2> /dev/null
 	cut -f2 ${dir}${sample}.taxIDs.counts |\
 	while read line
 	do
