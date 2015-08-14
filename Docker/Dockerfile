@@ -13,10 +13,7 @@ RUN apt-get -y update && \
  apt-get install -y git && \
  apt-get install -y gzip
  
-
-
-
-#Install python
+#Install python, biopython
 RUN apt-get -y update && \
  apt-get install -y libreadline-gplv2-dev libncursesw5-dev libssl-dev libsqlite3-dev tk-dev libgdbm-dev libc6-dev libbz2-dev && \
  wget http://python.org/ftp/python/2.7.9/Python-2.7.9.tgz && \
@@ -25,8 +22,13 @@ RUN apt-get -y update && \
  cd Python-2.7.9 && \
  ./configure && \
  make && \
- make install
-
+ make install && \
+ cd .. && \
+ apt-get install -y python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose && \
+ wget http://biopython.org/DIST/biopython-1.65.tar.gz
+ tar -xf biopython-1.65.tar.gz && \
+ python setup.py build && \
+ python setup.py install
 
 #Install Jellyfish V1
 RUN wget http://www.cbcb.umd.edu/software/jellyfish/jellyfish-1.1.11.tar.gz && \
