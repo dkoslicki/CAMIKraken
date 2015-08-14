@@ -45,7 +45,7 @@ RUN wget https://github.com/DerrickWood/kraken/archive/v0.10.5-beta.tar.gz && \
  ./install_kraken.sh . || echo "ok"
 
 #Get wrapper/format conversion code
-RUN git clone https://github.com/dkoslicki/CAMIKraken.git
+RUN git clone https://github.com/dkoslicki/CAMIKraken.git && \
  cp /CAMIKraken/Docker/default /dckr/etc/tasks.d/default && \
  cp /CAMIKraken/Docker/train /dckr/etc/tasks.d/train && \
  cp /CAMIKraken/src/KrakenToCAMI.py /usr/local/sbin/ && \
