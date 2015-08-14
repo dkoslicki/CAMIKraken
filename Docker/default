@@ -48,7 +48,8 @@ do
 	done
 
 	#Then paste the counts together with the full taxonomy
-	paste <(cat ${dir}${sample}.taxIDs.fullTaxonomy) <(cut -f1 ${dir}${sample}.taxIDs.counts) > ${dir}${sample}.taxIDs.fullTaxonomyAndCounts
+	cut -f1 ${dir}${sample}.taxIDs.counts > ${dir}${sample}.counts
+	paste ${dir}${sample}.taxIDs.fullTaxonomy ${dir}${sample}.counts > ${dir}${sample}.taxIDs.fullTaxonomyAndCounts
 	
 	#Then do the format conversion in python
 	#Get rid of the -t option after making sure kraken doesn't complain when including unclassified sequences
