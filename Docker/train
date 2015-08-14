@@ -33,9 +33,9 @@ then
 fi
 
 #Create output
-mkdir /dckr/mnt/output/Database
-mkdir /dckr/mnt/output/Database/taxonomy
-mkdir /dckr/mnt/output/Database/library
+mkdir -p /dckr/mnt/output/Database
+mkdir -p /dckr/mnt/output/Database/taxonomy
+mkdir -p /dckr/mnt/output/Database/library
 cp /dckr/mnt/input/names.dmp /dckr/mnt/output/Database/taxonomy
 cp /dckr/mnt/input/nodes.dmp /dckr/mnt/output/Database/taxonomy
 cp /dckr/mnt/input/gi_taxid_nucl.dmp /dckr/mnt/output/Database/taxonomy
