@@ -42,7 +42,7 @@ RUN wget https://github.com/DerrickWood/kraken/archive/v0.10.5-beta.tar.gz && \
  tar -xzf v0.10.5-beta.tar.gz && \
  rm v0.10.5-beta.tar.gz && \
  cd kraken-0.10.5-beta && \
- ./install_kraken.sh .
+ ./install_kraken.sh . || echo "ok"
 
 #Get wrapper/format conversion code
 RUN git clone https://github.com/dkoslicki/CAMIKraken.git
