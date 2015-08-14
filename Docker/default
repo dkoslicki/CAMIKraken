@@ -1,0 +1,57 @@
+## here you should call the task(s) that you want to run as default using the following syntax (preferable to a symbolic link)
+# . "$DCKR_TASKS"/mytask1
+#echo 'Default task is empty' 1>&2
+#check if list of input files exist
+if [ ! -f "$CONT_FASTQ_FILE_LISTING" ]
+then
+	echo "List of input files not given. Please include a list of input files at: $CONT_FASTQ_FILE_LISTING" 1>&2
+	exit 0
+fi
+
+#check if Data folder is present
+if [ ! -d ${CONT_DATABASES_DIR}/Database ]
+then
+	echo "Data directory missing. Hint, include the following command when starting docker: -v /path/to/local/Data:/dckr/mnt/camiref/Database:ro" 1>&2
+	exit 0
+fi
+
+cd /dckr/mnt/input
+for file in `cat $CONT_FASTQ_FILE_LISTING`
+do
+	#Check if input file exists
+	if [ ! -f $file ]
+	then
+		echo "The file $file does not exist. Please make sure it is accessible in /dckr/mnt/input/. Hint, include the following command when starting docker: -v /path/to/input/dir:/dckr/mnt/input:ro" 1>&2
+		exit 0
+	fi
+	#prep and classify sample
+	#decompress, no need since Kraken can handle this itself
+	#gunzip -c -d $file > /tmp/input.fq
+	cd /tmp
+	dir="/tmp/"
+	sample=${file}.kraken
+	#Run Kraken, and tally results
+	#Can just pipe this to cut | sort | uniq | sed so I don't have to write an intermediate file...doesn't really matter too much...
+	/kraken-0.10.5-beta/./kraken --preload --db ${CONT_DATABASES_DIR}/Database --fastq-input --gzip-compressed --threads ${DCKR_THREADS} /dckr/mnt/input/${file} | cut -f3 | sort | LC_ALL=C uniq -c | sed -e 's/^ *//;s/ /\t/' > ${dir}${sample}.taxIDs.counts
+
+	#Then find the taxIDs in the taxonomy and print out the taxonomy
+	rm ${dir}${sample}.taxIDs.fullTaxonomy 2> /dev/null
+	cut -f2 ${dir}${sample}.taxIDs.counts |\
+	while read line
+	do
+		if grep -q -m1 "^${line}_" ${CONT_DATABASES_DIR}/Database/taxonomy_taxID_Kraken.txt
+		then
+			grep -m1 "^${line}_" ${CONT_DATABASES_DIR}/Database/taxonomy_taxID_Kraken.txt >> ${dir}${sample}.taxIDs.fullTaxonomy
+		else
+			echo -e "-1_unknown\t-1\tunknown__-1" >> ${dir}${sample}.taxIDs.fullTaxonomy
+		fi
+	done
+
+	#Then paste the counts together with the full taxonomy
+	paste <(cat ${dir}${sample}.taxIDs.fullTaxonomy) <(cut -f1 ${dir}${sample}.taxIDs.counts) > ${dir}${sample}.taxIDs.fullTaxonomyAndCounts
+	
+	#Then do the format conversion in python
+	#Get rid of the -t option after making sure kraken doesn't complain when including unclassified sequences
+	python /usr/local/sbin/KrakenToCAMI.py -i ${dir}${sample}.taxIDs.fullTaxonomyAndCounts -o ${CONT_PROFILING_FILES}/${file}.profile -s ${file}
+done
+
