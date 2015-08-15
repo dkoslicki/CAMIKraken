@@ -24,12 +24,11 @@ RUN apt-get -y update && \
  make && \
  make install && \
  cd .. && \
- apt-get install -y python-numpy python-scipy python-matplotlib ipython ipython-notebook python-pandas python-sympy python-nose && \
- wget http://biopython.org/DIST/biopython-1.65.tar.gz
- tar -xf biopython-1.65.tar.gz && \
- python setup.py build && \
- python setup.py install
-
+ apt-get install -y python-numpy python-scipy python-dev && \
+ pip install -U setuptools && \
+ pip install -U pip && \
+ pip install biopython
+ 
 #Install Jellyfish V1
 RUN wget http://www.cbcb.umd.edu/software/jellyfish/jellyfish-1.1.11.tar.gz && \
  tar -xzf jellyfish-1.1.11.tar.gz && \
