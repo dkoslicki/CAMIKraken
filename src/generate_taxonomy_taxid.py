@@ -44,9 +44,9 @@ def read_params(args):
          help="The remote NCBI taxdumpfile (default is ftp://ftp.ncbi.nlm.nih.gov/pub/taxonomy/taxdump.tar.gz)")
     arg( '--output', metavar='out', required = True, default = None, type = str, 
          help="The output taxonomy")
-    arg( '--output_red', metavar='out_red', required = True, default = None, type = str, 
+    arg( '--output_red', metavar='out_red', required = False, default = None, type = str, 
          help="The output taxonomy with reduced and fixed number of taxonomic levels")
-    arg( '--pickle', metavar='pickle', required = True, default = None, type = str, 
+    arg( '--pickle', metavar='pickle', required = False, default = None, type = str, 
          help="The pickle output file")
     return vars(parser.parse_args())
 
