@@ -15,7 +15,7 @@ RUN apt-get -y update && \
  
 #Install python, biopython
 RUN apt-get -y update && \ 
- apt-get install python && \
+ apt-get install -y python && \
  apt-get install -y python-numpy python-scipy python-dev python-pip && \
  easy_install -f http://biopython.org/DIST/ biopython
  
