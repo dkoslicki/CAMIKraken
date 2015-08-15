@@ -32,6 +32,7 @@ RUN wget http://www.cbcb.umd.edu/software/jellyfish/jellyfish-1.1.11.tar.gz && \
 RUN wget https://github.com/DerrickWood/kraken/archive/v0.10.5-beta.tar.gz && \
  tar -xzf v0.10.5-beta.tar.gz && \
  rm v0.10.5-beta.tar.gz && \
+ cp jellyfish-1.1.11/bin/jellyfish kraken-0.10.5-beta && \
  cd kraken-0.10.5-beta && \
  ./install_kraken.sh . || echo "ok"
 
