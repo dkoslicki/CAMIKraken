@@ -28,6 +28,21 @@ mkdir -p /dckr/mnt/output/Database/taxonomy
 mkdir -p /dckr/mnt/output/Database/library
 cd /dckr/mnt/output/Database/taxonomy
 tar -xzf /dckr/mnt/input/taxonomy.tar.gz
+if [ ! -f names.dmp ]
+then
+	echo "Missing names.dmp from taxonomy.tar.gz"
+	exit 0
+fi
+if [ ! -f nodes.dmp ]
+then
+	echo "Missing nodes.dmp from taxonomy.tar.gz"
+	exit 0
+fi
+if [ ! -f gi_taxid_nucl.dmp ]
+then
+	echo "Missing gi_taxid_nucl.dmp from taxonomy.tar.gz"
+	exit 0
+fi
 #cp /dckr/mnt/input/names.dmp /dckr/mnt/output/Database/taxonomy
 #cp /dckr/mnt/input/nodes.dmp /dckr/mnt/output/Database/taxonomy
 #cp /dckr/mnt/input/gi_taxid_nucl.dmp /dckr/mnt/output/Database/taxonomy
