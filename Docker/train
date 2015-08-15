@@ -16,19 +16,9 @@ then
 fi
 
 #check if names, nodes, and gi_taxid_nucl.dmp exist
-if [ ! -f /dckr/mnt/input/names.dmp ]
+if [ ! -f /dckr/mnt/input/taxonomy.tar.gz ]
 then
-	echo "Missing names.dmp from input folder"
-	exit 0
-fi
-if [ ! -f /dckr/mnt/input/nodes.dmp ]
-then
-	echo "Missing nodes.dmp from input folder"
-	exit 0
-fi
-if [ ! -f /dckr/mnt/input/gi_taxid_nucl.dmp ]
-then
-	echo "Missing gi_taxid_nucl.dmp from input folder"
+	echo "Missing taxonomy.tar.gz from input folder. The file taxonomy.tar.gz must include names.dmp, nodes.dmp, and gi_taxid_nucl.dmp"
 	exit 0
 fi
 
@@ -36,9 +26,11 @@ fi
 mkdir -p /dckr/mnt/output/Database
 mkdir -p /dckr/mnt/output/Database/taxonomy
 mkdir -p /dckr/mnt/output/Database/library
-cp /dckr/mnt/input/names.dmp /dckr/mnt/output/Database/taxonomy
-cp /dckr/mnt/input/nodes.dmp /dckr/mnt/output/Database/taxonomy
-cp /dckr/mnt/input/gi_taxid_nucl.dmp /dckr/mnt/output/Database/taxonomy
+cd /dckr/mnt/output/Database/taxonomy
+tar -xzf /dckr/mnt/input/taxonomy.tar.gz
+#cp /dckr/mnt/input/names.dmp /dckr/mnt/output/Database/taxonomy
+#cp /dckr/mnt/input/nodes.dmp /dckr/mnt/output/Database/taxonomy
+#cp /dckr/mnt/input/gi_taxid_nucl.dmp /dckr/mnt/output/Database/taxonomy
 
 #Add all files to Kraken training database
 cat $CONT_CONTIGS_FILE_LISTING | xargs -I{} /kraken-0.10.5-beta/./kraken-build --add-to-library /dckr/mnt/input/{} --db /dckr/mnt/output/Database
@@ -48,8 +40,9 @@ cat $CONT_CONTIGS_FILE_LISTING | xargs -I{} /kraken-0.10.5-beta/./kraken-build -
 
 #Build the taxonomy
 cd /tmp
-tar -czf NamesAndNodes.tar.gz /dckr/mnt/input/names.dmp /dckr/mnt/input/nodes.dmp
-python /usr/local/sbin/generate_taxonomy_taxid.py --ncbi_taxdump file:///temp/NamesAndNodes.tar.gz --output taxonomy_taxID.txt
+#tar -czf NamesAndNodes.tar.gz /dckr/mnt/input/names.dmp /dckr/mnt/input/nodes.dmp
+#python /usr/local/sbin/generate_taxonomy_taxid.py --ncbi_taxdump file:///temp/NamesAndNodes.tar.gz --output taxonomy_taxID.txt
+python /usr/local/sbin/generate_taxonomy_taxid.py --ncbi_taxdump file:///dckr/mnt/input/taxonomy.tar.gz --output taxonomy_taxID.txt
 cut -f2 /dckr/mnt/output/Database/seq2taxid.map | sort -u | LC_ALL=C xargs -I{} grep -m1 "^{}_" taxonomy_taxID.txt > /dckr/mnt/output/Database/taxonomy_taxID_Kraken.txt
 
 
