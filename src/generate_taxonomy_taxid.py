@@ -392,11 +392,11 @@ if __name__ == '__main__':
         tax_tree.print_tree( par['output'] )
         logger.info(par['output'] + ' saved.')
 
-    logger.info('Processing the taxonomy for consistency and a fixed number of taxonomic levels')
-    tax_tree.get_tree_with_reduced_taxonomy(logger=logger)
-    logger.info('Finished postprocessing the taxonomy')
 
     if par['output_red']:
+        logger.info('Processing the taxonomy for consistency and a fixed number of taxonomic levels')
+        tax_tree.get_tree_with_reduced_taxonomy(logger=logger)
+        logger.info('Finished postprocessing the taxonomy')
         logger.info('Exporting the edited NCBI taxonomy to: '+par['output_red'])
         tax_tree.print_tree( par['output_red'], reduced = True)
         logger.info(par['output_red'] + ' saved.')
