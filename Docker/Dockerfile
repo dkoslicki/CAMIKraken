@@ -24,7 +24,7 @@ RUN apt-get -y update && \
  make && \
  make install && \
  cd .. && \
- apt-get install -y python-numpy python-scipy python-dev && \
+ apt-get install -y python-numpy python-scipy python-dev python-pip && \
  pip install -U setuptools && \
  pip install -U pip && \
  pip install biopython
