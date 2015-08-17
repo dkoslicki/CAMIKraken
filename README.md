@@ -23,13 +23,13 @@ Note that training on the NCBI bacterial genomes can take approximately 4 hours 
 
 An example command for training using the docker is:
 ```bash
-docker run --rm -d "DCKR_THREADS=48" -v /path/to/output:/dckr/mnt/output:rw -v /path/to/TrainingData:/dckr/mnt/input:ro -t dkoslicki/camikraken train
+docker run --rm -e "DCKR_THREADS=48" -v /path/to/output:/dckr/mnt/output:rw -v /path/to/TrainingData:/dckr/mnt/input:ro -t dkoslicki/camikraken train
 ```
 Where the folder ``/path/to/TrainingData`` has the files ``taxonomy.tar.gz``, ``sample.fna.list``, and the files listed in ``sample.fna.list``.
 
 ## Testing ##
 After training is complete, the default task will classify an input metagenome. An example command would be:
 ```bash
-docker run --rm -d "DCKR_THREADS=48" -v /path/to/Database:/dckr/mnt/camiref/Database:ro -v /path/to/output:/dckr/mnt/output:rw -v /path/to/input:/dckr/mnt/input:ro -t dkoslicki/camikraken default
+docker run --rm -e "DCKR_THREADS=48" -v /path/to/Database:/dckr/mnt/camiref/Database:ro -v /path/to/output:/dckr/mnt/output:rw -v /path/to/input:/dckr/mnt/input:ro -t dkoslicki/camikraken default
 ```
 Where the folder ``/path/to/Database`` was produced by the ``train`` task. The folder ``/path/to/input`` must have a file called ``sample.fq.gz.list`` that lists the files present in ``/path/to/input`` that you wish to have classified.
