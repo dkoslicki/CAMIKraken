@@ -51,7 +51,8 @@ fi
 cat $CONT_CONTIGS_FILE_LISTING | xargs -I{} /kraken-0.10.5-beta/./kraken-build --add-to-library /dckr/mnt/input/{} --db /dckr/mnt/output/Database
 
 #Build the Kraken database
-/kraken-0.10.5-beta/./kraken-build --build --db /dckr/mnt/output/Database --threads ${DCKR_THREADS} --kmer-len 10 --minimizer-len 5 --work-on-disk
+/kraken-0.10.5-beta/./kraken-build --build --db /dckr/mnt/output/Database --threads ${DCKR_THREADS} 
+#--kmer-len 10 --minimizer-len 5 --work-on-disk
 
 #Build the taxonomy
 cd /tmp
